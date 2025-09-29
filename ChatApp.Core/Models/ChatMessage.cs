@@ -16,5 +16,19 @@ namespace ChatApp.Core.Models
         public string Message { get; set; } = string.Empty;
 
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
+        private ChatMessage() { }
+
+        public static ChatMessage Create(string username, string message)
+        {
+            var chatMessage = new ChatMessage
+            {
+                Username = username.Trim(),
+                Message = message.Trim(),
+                Timestamp = DateTime.UtcNow
+            };
+
+            return chatMessage;
+        }
     }
 }

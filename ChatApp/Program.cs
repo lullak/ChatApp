@@ -1,19 +1,70 @@
 using ChatApp.Core.Interfaces.Repos;
+using ChatApp.Core.Interfaces.Services;
+using ChatApp.Core.Services;
 using ChatApp.Data.Contexts;
 using ChatApp.Data.Repos;
+using ChatApp.Hubs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllersWithViews();
+
+//EF
 builder.Services.AddDbContext<ChatDbContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//DI
 builder.Services.AddScoped<IChatRepo, ChatRepo>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
 
+//SignalR
+builder.Services.AddSignalR();
 
+//JWT Auth
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+   .AddJwtBearer(options =>
+   {
+       options.TokenValidationParameters = new TokenValidationParameters
+       {
+           ValidateIssuer = true,
+           ValidateAudience = true,
+           ValidateLifetime = true,
+           ValidateIssuerSigningKey = true,
+           ValidIssuer = builder.Configuration["Jwt:Issuer"],
+           ValidAudience = builder.Configuration["Jwt:Audience"],
+           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+       };
+       options.Events = new JwtBearerEvents
+       {
+           OnMessageReceived = context =>
+           {
+               if (context.Request.Cookies.TryGetValue("token", out var token))
+               {
+                   context.Token = token;
+               }
+               return Task.CompletedTask;
+           },
+           OnChallenge = context =>
+           {
+               context.HandleResponse();
+               context.Response.Redirect("/Auth");
+               return Task.CompletedTask;
+           }
+       };
+   });
 
+builder.Services.AddAuthorization();
+
+//Kestrel
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(7061, listenOptions =>
@@ -23,15 +74,12 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
+app.UseHsts();
 
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -41,5 +89,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
+//SignalR
+app.MapHub<ChatHub>("/chathub");
 app.Run();

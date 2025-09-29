@@ -1,0 +1,24 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex align-items-center justify-content-center vh-100">
+    <div class="card" style="width: 25rem;">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">Join Chat</h4>
+            <form asp-action="Index" method="post">
+                <div class="mb-3">
+                    <input asp-for="Username" class="form-control" placeholder="Enter your username" />
+                    <span asp-validation-for="Username" class="text-danger small"></span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Join</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/login.js"></script>
+}
