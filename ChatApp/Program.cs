@@ -6,6 +6,7 @@ using ChatApp.Data.Repos;
 using ChatApp.Hubs;
 using ChatApp.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -20,7 +21,10 @@ try
     builder.Host.UseSerilog();
 
 
-    builder.Services.AddControllersWithViews();
+    builder.Services.AddControllersWithViews(options =>
+    {
+        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+    });
 
     //EF
     builder.Services.AddDbContext<ChatDbContext>(options =>

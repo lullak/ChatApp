@@ -7,6 +7,7 @@ namespace ChatApp.Controllers
     [Authorize]
     public class HomeController() : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value;

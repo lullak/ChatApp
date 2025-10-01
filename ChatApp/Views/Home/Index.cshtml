@@ -1,8 +1,56 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Security.Claims
+@{
+    ViewData["Title"] = "Chat App";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid vh-100 d-flex flex-column">
+    <div class="row flex-grow-1" style="min-height: 0;">
+
+        <div class="col-md-3 bg-light border-end d-flex flex-column p-0">
+            <div class="p-3 border-bottom d-flex flex-column gap-2">
+                <div class="text-truncate">
+                    <span class="text-muted">Hello,</span>
+                    <strong class="ms-1">@User.FindFirst(ClaimTypes.Name)?.Value</strong>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Chats</h5>
+
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Logout" title="Logout">
+                            Logout
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+            <nav id="chat-list" class="nav nav-pills flex-column p-2"></nav>
+            <hr class="m-0" />
+            <h5 class="p-3 mb-0 border-bottom">Online Users (<span id="online-users-count">0</span>)</h5>
+            <div id="user-list" class="list-group list-group-flush overflow-auto"></div>
+        </div>
+        <div id="chat-window"
+             class="col-md-9 d-flex flex-column p-0"
+             data-token="@ViewData["token"]"
+             data-username="@User.FindFirst(ClaimTypes.Name)?.Value">
+
+            <div class="p-3 border-bottom">
+                <h4 id="active-chat-name"></h4>
+            </div>
+
+            <div id="messages-list" class="flex-grow-1 p-3 overflow-auto" style="min-height: 0;"></div>
+
+            <form id="message-form" class="p-3 border-top bg-light">
+                <div class="input-group">
+                    <input type="text" id="message-input" class="form-control" placeholder="Type a message..." />
+                    <button class="btn btn-primary" type="submit" disabled>Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+}

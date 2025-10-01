@@ -2,12 +2,14 @@
 using ChatApp.Hubs;
 using ChatApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ChatApp.Controllers
 {
-    public class AuthController(ITokenService tokenService) : Controller
+    public class AuthController(ITokenService tokenService, ILogger<AuthController> logger) : Controller
     {
         private readonly ITokenService _tokenService = tokenService;
+        private readonly ILogger _logger = logger;
 
         [HttpGet]
         public IActionResult Index()
@@ -16,6 +18,7 @@ namespace ChatApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Index(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -45,7 +48,18 @@ namespace ChatApp.Controllers
             };
             Response.Cookies.Append("token", token, cookieOptions);
 
+            _logger.LogInformation($"Username: {model.Username.Trim()} logged in");
+
             return LocalRedirect("/");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            _logger.LogInformation($"Username: {User.FindFirst(ClaimTypes.Name)?.Value} logged out");
+            Response.Cookies.Delete("token");
+            return RedirectToAction("Index");
         }
     }
 }

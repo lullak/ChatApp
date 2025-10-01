@@ -1,4 +1,6 @@
 ﻿using Serilog;
+using Serilog.Events;
+using Serilog.Filters;
 
 namespace ChatApp.Logging
 {
@@ -8,6 +10,9 @@ namespace ChatApp.Logging
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.StaticFiles"))
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File("Logs/log-.txt",
