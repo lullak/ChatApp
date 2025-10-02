@@ -1,6 +1,7 @@
 ﻿using ChatApp.Core.Interfaces.Repos;
 using ChatApp.Core.Models;
 using ChatApp.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Data.Repos
 {
@@ -12,6 +13,17 @@ namespace ChatApp.Data.Repos
         {
             _context.ChatMessages.Add(message);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<ChatMessage>> GetRecentMessagesAsync(int limit = 100)
+        {
+            var recent = await _context.ChatMessages
+                .OrderByDescending(m => m.Timestamp)
+                .Take(limit)
+                .ToListAsync();
+
+            recent.Reverse(); // chronological order
+            return recent;
         }
     }
 }

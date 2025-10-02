@@ -9,7 +9,7 @@ namespace ChatApp.Controllers
     public class AuthController(ITokenService tokenService, ILogger<AuthController> logger) : Controller
     {
         private readonly ITokenService _tokenService = tokenService;
-        private readonly ILogger _logger = logger;
+        private readonly ILogger<AuthController> _logger = logger;
 
         [HttpGet]
         public IActionResult Index()

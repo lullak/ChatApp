@@ -33,6 +33,7 @@ try
     //DI
     builder.Services.AddScoped<IChatRepo, ChatRepo>();
     builder.Services.AddSingleton<ITokenService, TokenService>();
+    builder.Services.AddSingleton<IAesKeyService, AesKeyService>();
 
     //SignalR
     builder.Services.AddSignalR();
