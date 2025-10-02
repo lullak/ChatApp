@@ -21,8 +21,8 @@ Features: SignalR , JWT auth via cookie, AES‑GCM client encryption, private di
    - `Update-Database`
 5. Trust dev HTTPS certificate (required for secure cookie):
    - Visual Studio prompts on first run, or run:  
-     `dotnet dev-certs https --trust`
-     `dotnet dev-certs https --clean` IF NEEDED
+    - `dotnet dev-certs https --trust`
+    - `dotnet dev-certs https --clean` IF NEEDED
 6. Start.
 7. Open: `https://localhost:7061`
 
