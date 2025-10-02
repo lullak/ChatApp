@@ -5,7 +5,7 @@ Features: SignalR , JWT auth via cookie, AES‑GCM client encryption, private di
 
 ## Prerequisites
 - .NET 9 SDK
-- Visual Studio 2022 (ASP.NET workload) or CLI, Readme only explains how to set it up in visual studio.
+- Visual Studio 2022 - Readme only explains how to set it up in visual studio.
 
 ## Configuration
 `appsettings.json`:
