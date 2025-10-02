@@ -17,7 +17,6 @@ Features: SignalR , JWT auth via cookie, AES‑GCM client encryption, private di
 2. Restore packages: __Build > Restore NuGet Packages__.
 3. Set `ChatApp` as startup project: right‑click project → __Set as Startup Project__.
 4. EF Migrations: open __Tools > NuGet Package Manager > Package Manager Console__ (select `ChatApp` as Default project) and run:
-   - `Add-Migration InitialCreate` (only first time)
    - `Update-Database`
 5. Trust dev HTTPS certificate (required for secure cookie):
    - Visual Studio prompts on first run, or run:  
