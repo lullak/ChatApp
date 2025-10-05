@@ -1,15 +1,17 @@
 ﻿using ChatApp.Core.Interfaces.Services;
 using ChatApp.Hubs;
 using ChatApp.Models;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace ChatApp.Controllers
 {
-    public class AuthController(ITokenService tokenService, ILogger<AuthController> logger) : Controller
+    public class AuthController(ITokenService tokenService, ILogger<AuthController> logger, IHtmlSanitizer sanitizer) : Controller
     {
         private readonly ITokenService _tokenService = tokenService;
         private readonly ILogger<AuthController> _logger = logger;
+        private readonly IHtmlSanitizer _sanitizer = sanitizer;
 
         [HttpGet]
         public IActionResult Index()
@@ -26,19 +28,21 @@ namespace ChatApp.Controllers
                 return View(model);
             }
 
-            if (string.IsNullOrWhiteSpace(model.Username))
+            var sanitizedUsername = _sanitizer.Sanitize(model.Username.Trim());
+
+            if (string.IsNullOrWhiteSpace(sanitizedUsername))
             {
                 ModelState.AddModelError("Username", "Username cannot be empty");
                 return View(model);
             }
 
-            if (ChatHub.IsUserOnline(model.Username.Trim()))
+            if (ChatHub.IsUserOnline(sanitizedUsername))
             {
                 ModelState.AddModelError("Username", "This username is already taken.");
                 return View(model);
             }
 
-            var token = _tokenService.GenerateToken(model.Username.Trim());
+            var token = _tokenService.GenerateToken(sanitizedUsername);
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -48,7 +52,7 @@ namespace ChatApp.Controllers
             };
             Response.Cookies.Append("token", token, cookieOptions);
 
-            _logger.LogInformation($"Username: {model.Username.Trim()} logged in");
+            _logger.LogInformation($"Username: {sanitizedUsername} logged in");
 
             return LocalRedirect("/");
         }

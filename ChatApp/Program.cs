@@ -5,6 +5,7 @@ using ChatApp.Data.Contexts;
 using ChatApp.Data.Repos;
 using ChatApp.Hubs;
 using ChatApp.Logging;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,8 @@ try
     //DI
     builder.Services.AddScoped<IChatRepo, ChatRepo>();
     builder.Services.AddSingleton<ITokenService, TokenService>();
-    builder.Services.AddSingleton<IAesKeyService, AesKeyService>();
+    builder.Services.AddSingleton<IAesService, AesService>();
+    builder.Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
 
     //SignalR
     builder.Services.AddSignalR();
