@@ -1,15 +1,14 @@
 ﻿using ChatApp.Core.Services;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ChatApp.Tests.Services
 {
-    public class AesKeyServiceTests
+    public class AesServiceTests
     {
         [Fact]
         public void GenerateRandomKey_KeyLengthIs32AndIsNotNull()
         {
   
-            var service = new AesKeyService();
+            var service = new AesService();
 
             var key = service.GenerateRandomKey();
 
@@ -21,7 +20,7 @@ namespace ChatApp.Tests.Services
         public void GenerateRandomKey_KeyLengthAndCanBeCalledWith16And24And32()
         {
 
-            var service = new AesKeyService();
+            var service = new AesService();
 
             var key16 = service.GenerateRandomKey(16);
             var key24 = service.GenerateRandomKey(24);
@@ -39,8 +38,7 @@ namespace ChatApp.Tests.Services
         [Fact]
         public void GenerateRandomKey_KeyLengthOtherThan16and24and32ThrowsError()
         {
-            // Arrange
-            var service = new AesKeyService();
+            var service = new AesService();
 
             Assert.Throws<ArgumentException>(() => service.GenerateRandomKey(33));
         }
@@ -49,11 +47,37 @@ namespace ChatApp.Tests.Services
         public void GenerateRandomKey_KeyDoesNotMatch()
         {
 
-            var service = new AesKeyService();
+            var service = new AesService();
 
             var key1 = service.GenerateRandomKey();
             var key2 = service.GenerateRandomKey();
             Assert.NotEqual(key1, key2);
+        }
+
+        [Fact]
+        public void Encrypt_And_Decrypt_ReturnsOriginalMessage()
+        {
+            var service = new AesService();
+            var key = service.GenerateRandomKey();
+            var originalMessage = "Testing Testing 123 123";
+ 
+            var encryptedMessage = service.Encrypt(originalMessage, key);
+            var decryptedMessage = service.Decrypt(encryptedMessage, key);
+
+            Assert.Equal(originalMessage, decryptedMessage);
+        }
+
+        [Fact]
+        public void Encrypt_MultipleTimesGivesDifferentResults()
+        {
+            var service = new AesService();
+            var key = service.GenerateRandomKey();
+            var originalMessage = "Testing Testing 123 123";
+
+            var encryptedMessage1 = service.Encrypt(originalMessage, key);
+            var encryptedMessage2 = service.Encrypt(originalMessage, key);
+
+            Assert.NotEqual(encryptedMessage1, encryptedMessage2);
         }
     }
 }
