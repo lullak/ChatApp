@@ -3,15 +3,10 @@ using ChatApp.Data.Contexts;
 using ChatApp.Data.Repos;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChatApp.Tests.Repos
 {
-    public class ChatRepoIntegrationTests
+    public class ChatRepoIntegrationTests : IDisposable
     {
         private readonly SqliteConnection _connection;
         private readonly ChatDbContext _context;
@@ -47,9 +42,9 @@ namespace ChatApp.Tests.Repos
             Assert.Equal("Dennis", recent.First().Username);
             Assert.Equal("king", recent.First().Message);
             Assert.Equal("Bircan", recent.Last().Username);
+
         }
 
-        [Fact]
         public void Dispose()
         {
             _context?.Dispose();

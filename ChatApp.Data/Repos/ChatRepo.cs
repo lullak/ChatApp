@@ -22,7 +22,7 @@ namespace ChatApp.Data.Repos
                 .Take(limit)
                 .ToListAsync();
 
-            recent.Reverse(); // chronological order
+            recent.Reverse();
             return recent;
         }
     }
