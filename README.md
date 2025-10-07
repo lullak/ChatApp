@@ -1,7 +1,7 @@
 # ChatApp
 
 Real‑time chat built with .NET 9, MVC and SignalR.  
-Features: SignalR , JWT auth via cookie, AES‑GCM client encryption, private direct chats, SQLite and Serilog logging.
+Features: SignalR , JWT auth via cookie, AES‑GCM client and server encryption, private direct chats, SQLite and Serilog logging.
 
 ## Prerequisites
 - .NET 9 SDK
