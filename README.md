@@ -29,4 +29,6 @@ Features: SignalR , JWT auth via cookie, AES‑GCM client and server encryption,
 ## How it works
 - Login issues a JWT stored as an HttpOnly cookie (`token`). SignalR uses that cookie for auth.
 - On connect the server sends per‑group base64 AES keys. Client `wwwroot/js/aes.js` .
-- Encrypted messages use the format: `ENC:<ivBase64>:<cipherBase64>`. Server decrypts and stores payloads then encrypts; clients decrypt and sanitize with DOMPurify .
+- Encrypted messages use the format: `ENC:<ivBase64>:<cipherBase64>`.
+- Client -> Encrypt - > Server decrypt -> stores payload -> encrypt -> clients decrypt.
+- sanitize with DOMPurify "client" and HtmlSanitizer "Server" .
